@@ -3,39 +3,86 @@
 {% block title %}Your Profile · Hobby Corner{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{% static 'css/profile/profile.css' %}">{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-7">
-        <div class="card p-4 p-md-5">
-            <div class="text-center mb-4">
-                {% if profile.profile_image %}
-                    <img src="{{ profile.profile_image.url }}" class="profile-avatar mb-2" alt="Profile photo">
-                {% else %}
-                    <div class="profile-avatar profile-avatar-placeholder mb-2">
-                        {{ request.user.username|slice:":1"|upper }}
-                    </div>
-                {% endif %}
-                <h2 class="mb-0">{{ profile.full_name|default:request.user.username }}</h2>
-                <span class="badge bg-success-subtle text-success-emphasis px-3 py-2 mt-2">
-                    Trust Rating: {{ profile.trust_rating }}%
+<div class="row g-4">
+    <div class="col-lg-5">
+        <article class="card p-4 h-100 text-center">
+            {% if profile.profile_image %}
+                <img src="{{ profile.profile_image.url }}" class="profile-avatar mb-2" alt="Your profile photo">
+            {% else %}
+                <div class="profile-avatar profile-avatar-placeholder mb-2" aria-hidden="true">
+                    {{ request.user.username|slice:":1"|upper }}
+                </div>
+            {% endif %}
+            <h1 class="h3 mb-0">{{ request.user.get_full_name|default:request.user.username }}</h1>
+            <p class="text-muted mb-2">@{{ request.user.username }}</p>
+            <p>
+                <span class="badge bg-success-subtle text-success-emphasis px-3 py-2">
+                    Trust rating: {{ profile.trust_rating }}%
                 </span>
-            </div>
-            <form method="post" enctype="multipart/form-data" novalidate>
+            </p>
+            <p class="small text-muted mb-1">{{ profile.university_email }}</p>
+            <p class="small text-muted mb-3">📍 {{ profile.location|default:"Location not set" }}</p>
+            {% if profile.bio %}<p class="mb-3">{{ profile.bio|linebreaksbr }}</p>{% endif %}
+
+            <section aria-labelledby="interests-title" class="mb-3">
+                <h2 class="h6" id="interests-title">Interests</h2>
+                {% if interests %}
+                    <ul class="list-unstyled d-flex flex-wrap justify-content-center mb-0">
+                        {% for interest in interests %}<li class="interest-pill">{{ interest.name }}</li>{% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="small text-muted mb-0">None yet. Add some in the form.</p>
+                {% endif %}
+            </section>
+
+            <section aria-labelledby="hubs-title">
+                <h2 class="h6" id="hubs-title">Joined Hubs</h2>
+                {% if joined_hubs %}
+                    <ul class="list-unstyled d-flex flex-wrap justify-content-center mb-0">
+                        {% for hub in joined_hubs %}
+                            <li><a class="interest-pill text-decoration-none" href="{% url 'hubs:detail' hub.id %}">{{ hub.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="small text-muted mb-0">None yet. <a href="{% url 'hubs:list' %}">Find a Hub</a></p>
+                {% endif %}
+            </section>
+        </article>
+    </div>
+
+    <div class="col-lg-7">
+        <section class="card p-4 p-md-5" aria-labelledby="edit-title">
+            <h2 class="h4 mb-1" id="edit-title">Edit profile</h2>
+            <p class="text-muted mb-4">
+                Fields marked <span aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required.
+            </p>
+            <form method="post" action="{% url 'profile:profile' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% for field in form %}
                     <div class="mb-3">
-                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        <label for="{{ field.id_for_label }}" class="form-label">
+                            {{ field.label }}
+                            {% if field.field.required %}<span class="text-danger" aria-hidden="true">*</span>{% endif %}
+                        </label>
                         {{ field }}
                         {% if field.help_text %}
-                            <div class="form-text">{{ field.help_text }}</div>
+                            <div class="form-text" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</div>
                         {% endif %}
                         {% for error in field.errors %}
-                            <div class="text-danger small mt-1">{{ error }}</div>
+                            <div class="text-danger small mt-1" role="alert">{{ error }}</div>
                         {% endfor %}
+                        {% if field.name == 'interest_names' and popular_interests %}
+                            <div class="mt-2" role="group" aria-label="Popular interests">
+                                {% for interest in popular_interests %}
+                                    <button type="button" class="interest-suggestion" data-interest="{{ interest.name }}">+ {{ interest.name }}</button>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
-                <button type="submit" class="btn btn-primary w-100">Save changes</button>
+                <button type="submit" class="btn btn-primary profile-action w-100">Save changes</button>
             </form>
-        </div>
+        </section>
     </div>
 </div>
 {% endblock %}
