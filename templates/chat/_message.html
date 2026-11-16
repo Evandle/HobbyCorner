@@ -1,0 +1,18 @@
+{# One message. Used by the page and (later) by the live-update endpoint, so the markup lives in one place. #}
+<article class="chat-message{% if message.sender_id == request.user.id %} chat-message-mine{% endif %}" data-message-id="{{ message.id }}">
+    <header class="chat-meta">
+        <strong>{{ message.sender.first_name|default:message.sender.username }}</strong>
+        <time datetime="{{ message.created_at|date:'c' }}">{{ message.created_at|date:"H:i" }}</time>
+    </header>
+    {% if message.content %}<p class="chat-text">{{ message.content|linebreaksbr }}</p>{% endif %}
+    {% if message.image %}
+        <img src="{{ message.image.url }}" class="chat-image" loading="lazy"
+             alt="Picture sent by {{ message.sender.first_name|default:message.sender.username }}">
+    {% endif %}
+    {% if message.sender_id == request.user.id %}
+        <form method="post" action="{% url 'chat:delete' hub.id message.id %}" class="chat-delete-form">
+            {% csrf_token %}
+            <button type="submit" class="chat-delete">Delete<span class="visually-hidden"> your message</span></button>
+        </form>
+    {% endif %}
+</article>

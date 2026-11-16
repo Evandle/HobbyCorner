@@ -1,0 +1,54 @@
+/* Chat feature: only affects the chat screen. */
+.chat-card { overflow: hidden; }
+.chat-log {
+    max-height: 60vh;
+    min-height: 12rem;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #fafaff;
+}
+.chat-message {
+    max-width: 85%;
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.9rem;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    overflow-wrap: anywhere;
+}
+.chat-message-mine { margin-left: auto; background: #fff7ed; }
+.chat-meta { font-size: 0.8rem; color: #6b7280; }
+.chat-meta time { margin-left: 0.4rem; }
+.chat-text { margin: 0.15rem 0 0; }
+.chat-image { display: block; max-width: 100%; max-height: 18rem; border-radius: 0.6rem; margin-top: 0.4rem; }
+.chat-form { padding: 1rem; border-top: 1px solid #eee; }
+.chat-action { min-height: 3rem; }
+.chat-delete-form { margin: 0.25rem 0 0; text-align: right; }
+.chat-delete {
+    background: none;
+    border: 0;
+    color: #b91c1c;
+    font-size: 0.8rem;
+    min-block-size: 1.5rem;
+    min-inline-size: 1.5rem;
+    padding: 0 0.25rem;
+    cursor: pointer;
+}
+.chat-delete:focus-visible,
+.chat-log:focus-visible { outline: 2px solid #4338ca; outline-offset: 2px; }
+@media (pointer: coarse) {
+    .chat-delete { min-block-size: 2.75rem; min-inline-size: 2.75rem; }
+}
+
+.chat-new {
+    display: block;
+    margin: 0.5rem auto 0;
+    min-height: 2.75rem;
+    padding: 0.4rem 1rem;
+    border: 0;
+    border-radius: 999px;
+    background: #4338ca;
+    color: #fff;
+}
+.chat-new[hidden] { display: none; }
+.chat-new:focus-visible { outline: 2px solid #4338ca; outline-offset: 2px; }

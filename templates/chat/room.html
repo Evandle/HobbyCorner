@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ hub.name }} chat · Hobby Corner{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/chat/chat.css' %}">{% endblock %}
+{% block content %}
+<a href="{% url 'hubs:detail' hub.id %}" class="text-decoration-none small">← {{ hub.name }}</a>
+<h1 class="h3 mt-2 mb-1">{{ hub.name }} chat</h1>
+<p class="small text-muted">Only the last 24 hours are kept. Older messages disappear for good.</p>
+
+<section class="card chat-card" aria-label="{{ hub.name }} conversation">
+    <div id="chat-log" class="chat-log" role="log" aria-live="polite" aria-relevant="additions" tabindex="0"
+         data-last-id="{{ last_id }}" data-poll-url="{% url 'chat:poll' hub.id %}">
+        {% for message in chat_messages %}
+            {% include 'chat/_message.html' %}
+        {% empty %}
+            <p class="chat-empty text-muted">Nothing in the last 24 hours. Say hi!</p>
+        {% endfor %}
+        <div id="latest"></div>
+    </div>
+
+    <button type="button" id="chat-new" class="chat-new" hidden>New messages ↓</button>
+
+    <form method="post" action="{% url 'chat:room' hub.id %}" enctype="multipart/form-data" class="chat-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2" role="alert">{% for error in form.non_field_errors %}{{ error }} {% endfor %}</div>
+        {% endif %}
+        <label for="{{ form.content.id_for_label }}" class="visually-hidden">Message</label>
+        {{ form.content }}
+        {% for error in form.content.errors %}<div class="text-danger small mt-1" role="alert">{{ error }}</div>{% endfor %}
+
+        <label for="{{ form.image.id_for_label }}" class="form-label small mt-2 mb-1">{{ form.image.label }}</label>
+        {{ form.image }}
+        <div class="form-text" id="{{ form.image.auto_id }}_helptext">{{ form.image.help_text }}</div>
+        {% for error in form.image.errors %}<div class="text-danger small mt-1" role="alert">{{ error }}</div>{% endfor %}
+
+        <button type="submit" class="btn btn-primary chat-action w-100 mt-3">Send</button>
+    </form>
+</section>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/chat/chat.js' %}"></script>{% endblock %}
