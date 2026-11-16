@@ -6,6 +6,7 @@ each with its own templates/<feature>/ and static/{css,js,images}/<feature>/.
 """
 
 import os
+import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -46,6 +47,13 @@ INSTALLED_APPS = [
     "apps.home",
     "apps.profile",
     "apps.user_settings",
+    "apps.hubs",
+    "apps.chat",
+    # Shared lookup / model-only apps (no screens of their own yet)
+    "apps.locations",
+    "apps.ratings",
+    "apps.discovery",   # models only; the Discovery screen is not wired in yet
+    "apps.dbsecurity",  # turns on Supabase row-level security after migrate
 ]
 
 MIDDLEWARE = [
@@ -90,7 +98,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-if DATABASE_URL:
+# "test" check: `manage.py test` must never run against Supabase.
+if DATABASE_URL and "test" not in sys.argv:
     DATABASES = {
         "default": dj_database_url.parse(
             DATABASE_URL,
@@ -120,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Manila"
 USE_I18N = True
 USE_TZ = True
 
@@ -146,6 +155,14 @@ LOGIN_URL = "login:login"
 LOGIN_REDIRECT_URL = "home:home"
 LOGOUT_REDIRECT_URL = "login:login"
 
+
+# Which email domains count as "university" emails. Empty = any valid email.
+# Later: UNIVERSITY_EMAIL_DOMAINS=cit.edu in .env (subdomains are included).
+UNIVERSITY_EMAIL_DOMAINS = [
+    domain.strip().lower().lstrip("@")
+    for domain in os.environ.get("UNIVERSITY_EMAIL_DOMAINS", "").split(",")
+    if domain.strip()
+]
 
 # Email
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

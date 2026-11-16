@@ -12,6 +12,8 @@ urlpatterns = [
     path("register/", include("apps.register.urls")),
     path("profile/", include("apps.profile.urls")),
     path("settings/", include("apps.user_settings.urls")),
+    path("hubs/", include("apps.hubs.urls")),
+    path("chat/", include("apps.chat.urls")),
     path("", include("apps.home.urls")),
 ]
 
