@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard · Hobby Corner{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/home/home.css' %}">{% endblock %}
+{% block content %}
+<h2 class="mb-4">Your Dashboard</h2>
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card p-4 text-center h-100">
+            <div class="display-6 mb-2">👋</div>
+            <h4 class="mb-1">{{ user.username }}</h4>
+            <p class="text-muted mb-2">{{ profile.university_email }}</p>
+            <span class="badge bg-success-subtle text-success-emphasis fs-6 align-self-center px-3 py-2">
+                Trust Rating: {{ profile.trust_rating }}%
+            </span>
+            <a href="{% url 'profile:profile' %}" class="btn btn-outline-secondary btn-sm mt-3">Edit Profile</a>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card p-4 mb-4">
+            <h5>Your Interests</h5>
+            {% if interests %}
+                <div>
+                    {% for interest in interests %}
+                        <span class="hub-badge">{{ interest }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted mb-0">No interests added yet. Edit your profile to join a Hub.</p>
+            {% endif %}
+        </div>
+        <div class="card p-4 mb-4">
+            <h5>Joined Hubs</h5>
+            <p class="text-muted mb-0">
+                No Hubs joined yet — this is where your niche communities (e.g. "Pokemon Go", "Uma Musume")
+                will appear once the Hubs feature is built.
+            </p>
+        </div>
+        <div class="card p-4">
+            <h5>Nearby Discovery</h5>
+            <p class="text-muted mb-0">No nearby meetups right now. Check back soon!</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/home/home.js' %}"></script>{% endblock %}

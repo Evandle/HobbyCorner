@@ -1,0 +1,9 @@
+/* Settings feature — only affects the settings screen. */
+.settings-toggle {
+    padding-left: 2.5rem;
+}
+.settings-toggle .form-check-input {
+    width: 2.5rem;
+    height: 1.4rem;
+    cursor: pointer;
+}

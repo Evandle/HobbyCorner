@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Log In · Hobby Corner{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/login/login.css' %}">{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card p-4 p-md-5 login-card">
+            <h2 class="mb-1">Welcome back</h2>
+            <p class="text-muted mb-4">Log in to see what's happening in your Hubs.</p>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% for error in field.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary w-100">Log in</button>
+            </form>
+            <p class="text-center mt-3 mb-0">
+                New to Hobby Corner? <a href="{% url 'register:register' %}">Sign up</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/login/login.js' %}"></script>{% endblock %}

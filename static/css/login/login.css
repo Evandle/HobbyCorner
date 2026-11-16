@@ -1,0 +1,5 @@
+/* Login feature — only affects the login screen. */
+.login-card input:focus {
+    border-color: #fb923c;
+    box-shadow: 0 0 0 0.2rem rgba(251, 146, 60, 0.25);
+}
