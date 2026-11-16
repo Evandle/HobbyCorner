@@ -1,0 +1,11 @@
+{# One shared native <dialog>; hubs.js opens it for any form with data-confirm. #}
+<dialog id="confirm-dialog" class="confirm-dialog" aria-labelledby="confirm-dialog-title">
+    <form method="dialog">
+        <h2 class="h5" id="confirm-dialog-title">Are you sure?</h2>
+        <p id="confirm-dialog-message" class="text-muted"></p>
+        <div class="d-flex justify-content-end gap-2">
+            <button value="cancel" class="btn btn-outline-secondary hub-action" autofocus>Cancel</button>
+            <button value="confirm" class="btn btn-danger hub-action">Confirm</button>
+        </div>
+    </form>
+</dialog>

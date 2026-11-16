@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Hubs · Hobby Corner{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/hubs/hubs.css' %}">{% endblock %}
+{% block content %}
+<header class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <h1 class="h2 mb-0">Hubs</h1>
+    <div class="d-flex flex-wrap gap-2">
+        {% if user.is_staff and pending_review_count %}
+            <a href="{% url 'hubs:review' %}" class="btn btn-outline-warning hub-action d-inline-flex align-items-center">
+                Review requests ({{ pending_review_count }})
+            </a>
+        {% endif %}
+        <a href="{% url 'hubs:request' %}" class="btn btn-primary hub-action d-inline-flex align-items-center">+ Request a Hub</a>
+    </div>
+</header>
+
+<search class="mb-4">
+    <form method="get" action="{% url 'hubs:list' %}">
+        <label for="hub-search" class="visually-hidden">Search Hubs</label>
+        <div class="input-group">
+            <input id="hub-search" type="search" name="q" value="{{ query }}" class="form-control"
+                   placeholder="Search by name, category, or description"
+                   autocorrect="off" autocapitalize="off" spellcheck="false"
+                   enterkeyhint="search">
+            <button class="btn btn-outline-secondary hub-action" type="submit">Search</button>
+        </div>
+    </form>
+</search>
+
+{% if my_requests %}
+<section class="card p-4 mb-4" aria-labelledby="my-requests-title">
+    <h2 class="h5 mb-3" id="my-requests-title">Your requests</h2>
+    <ul class="list-unstyled mb-0">
+        {% for req in my_requests %}
+            <li class="d-flex justify-content-between align-items-center py-1">
+                <span>{{ req.name }}</span>
+                {% if req.status == 'pending' %}
+                    <span class="badge bg-warning-subtle text-warning-emphasis">{{ req.get_status_display }}</span>
+                {% else %}
+                    <span class="badge bg-danger-subtle text-danger-emphasis">{{ req.get_status_display }}</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+
+{% if hubs %}
+<ul class="list-unstyled row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-0">
+    {% for hub in hubs %}
+    <li class="col">
+        <article class="card hub-card h-100 p-4">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                <h2 class="h5 mb-0">
+                    <a href="{% url 'hubs:detail' hub.id %}" class="text-decoration-none text-dark">{{ hub.name }}</a>
+                </h2>
+                {% if hub.category %}<span class="hub-category">{{ hub.category }}</span>{% endif %}
+            </div>
+            <p class="text-muted small flex-grow-1">
+                {{ hub.description|truncatewords:22|default:"No description yet." }}
+            </p>
+            <div class="d-flex justify-content-between align-items-center gap-2">
+                <span class="small text-muted">{{ hub.member_count }} member{{ hub.member_count|pluralize }}</span>
+                {% if hub.is_member %}
+                    <form method="post" action="{% url 'hubs:leave' hub.id %}" data-confirm="Leave {{ hub.name }}?">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <button type="submit" class="btn btn-outline-secondary hub-action">Joined ✓ · Leave</button>
+                    </form>
+                {% else %}
+                    <form method="post" action="{% url 'hubs:join' hub.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <button type="submit" class="btn btn-primary hub-action">Join</button>
+                    </form>
+                {% endif %}
+            </div>
+        </article>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<section class="card p-5 text-center">
+    {% if query %}
+        <h2 class="h5">No Hubs match “{{ query }}”</h2>
+        <p class="text-muted mb-3">Try a different search, or request a Hub for it.</p>
+    {% else %}
+        <h2 class="h5">No Hubs yet</h2>
+        <p class="text-muted mb-3">Be the first to propose a niche community.</p>
+    {% endif %}
+    <div><a href="{% url 'hubs:request' %}" class="btn btn-primary hub-action d-inline-flex align-items-center">Request a Hub</a></div>
+</section>
+{% endif %}
+{% include 'hubs/_confirm_dialog.html' %}
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/hubs/hubs.js' %}"></script>{% endblock %}

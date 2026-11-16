@@ -30,11 +30,37 @@
             {% endif %}
         </div>
         <div class="card p-4 mb-4">
-            <h5>Joined Hubs</h5>
-            <p class="text-muted mb-0">
-                No Hubs joined yet — this is where your niche communities (e.g. "Pokemon Go", "Uma Musume")
-                will appear once the Hubs feature is built.
-            </p>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">Joined Hubs</h5>
+                <a href="{% url 'hubs:list' %}" class="small text-decoration-none">Browse all</a>
+            </div>
+            {% if joined_hubs %}
+                <div>
+                    {% for hub in joined_hubs %}
+                        <a href="{% url 'hubs:detail' hub.id %}" class="hub-badge text-decoration-none">{{ hub.name }}</a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted mb-0">
+                    No Hubs joined yet. <a href="{% url 'hubs:list' %}">Find your niche community</a>
+                    (e.g. "Pokemon Go", "Uma Musume").
+                </p>
+            {% endif %}
+        </div>
+        <div class="card p-4 mb-4">
+            <h5>Recent Hub activity</h5>
+            {% if active_hubs %}
+                <ul class="list-unstyled mb-0">
+                    {% for hub in active_hubs %}
+                        <li class="d-flex justify-content-between align-items-center py-1">
+                            <a href="{% url 'chat:room' hub.id %}" class="text-decoration-none">{{ hub.name }}</a>
+                            <span class="small text-muted">{{ hub.recent_messages }} message{{ hub.recent_messages|pluralize }} in the last 24 hours</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted mb-0">No new messages in the last 24 hours.</p>
+            {% endif %}
         </div>
         <div class="card p-4">
             <h5>Nearby Discovery</h5>
